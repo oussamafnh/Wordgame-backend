@@ -24,7 +24,7 @@ const server = http.createServer(app);
 
 
 server.listen(8090, () => {
-    console.log("Server running on port http://localhost:8090/");
+    console.log("Server running");
 });
 
 

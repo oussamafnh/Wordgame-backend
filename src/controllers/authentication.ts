@@ -1,5 +1,5 @@
 import express from 'express';
-import { getUserByEmail, createUser, getUserBySessionToken} from '../db/user';
+import { getUserByEmail, createUser, getUserBySessionToken } from '../db/user';
 
 import { random, authentication } from '../helpers/index';
 
@@ -70,7 +70,14 @@ export const login = async (req: express.Request, res: express.Response) => {
 
     await user.save();
 
-    res.cookie('APP_AUTH', user.authentication.sessionToken, { domain: 'localhost', path: '/' });
+    // res.cookie('APP_AUTH', user.authentication.sessionToken, { domain: 'localhost', path: '/' });
+    const cookieParams = { httpOnly: true, sameSite: "none" as const, secure: false };
+    res
+      .cookie(
+        'APP_AUTH',
+        user.authentication.sessionToken,
+        { ...cookieParams, expires: new Date(Date.now() + 25892000000) } // Set expiry of 1m
+      );
 
     return res.status(200).json(user).end();
   } catch (error) {
@@ -80,6 +87,7 @@ export const login = async (req: express.Request, res: express.Response) => {
     });
   }
 };
+
 
 export const logout = async (req: express.Request, res: express.Response) => {
   try {
