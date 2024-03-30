@@ -117,6 +117,29 @@ export const logout = async (req: express.Request, res: express.Response) => {
       message: err.message
     });
   }
-}
+};
 
+
+
+export const profile = async (req: express.Request, res: express.Response) => {
+  try {
+    const { APP_AUTH } = req.cookies;
+
+    if (!APP_AUTH) {
+      return res.status(401).send({ auth: false, message: 'No token provided.' });
+    }
+
+    const user = await getUserBySessionToken(APP_AUTH);
+
+    if(!user){
+      throw new Error("The user was not found");
+    }
+    
+    return res.status(200).json(user);
+  } catch (e) {
+    return res.status(500).json({
+      message: e.message
+    });
+  }
+}
 
